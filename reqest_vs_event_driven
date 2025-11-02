@@ -1,0 +1,83 @@
+| Aspect       | **Request-Driven Architecture**                                | **Event-Driven Architecture**                       |
+| :----------- | :------------------------------------------------------------- | :-------------------------------------------------- |
+| **Trigger**  | Direct client request (HTTP, RPC, gRPC)                        | Internal event (message, change, trigger)           |
+| **Flow**     | Request → Process → Response                                   | Event produced → Event consumed (async)             |
+| **Coupling** | Tightly coupled (services depend on each other’s availability) | Loosely coupled (producers don’t know who consumes) |
+| **Latency**  | Synchronous (immediate response)                               | Asynchronous (eventual completion)                  |
+| **Examples** | REST APIs, GraphQL endpoints                                   | Kafka, RabbitMQ, AWS SNS/SQS, pub/sub pipelines     |
+
+
+**Real-World Example**
+
+Request-Driven Example (e-commerce checkout)
+
+   Client → OrderService → PaymentService → InventoryService → ShippingService
+
+
+**Event-Driven Example (same scenario)**
+
+Client → OrderService → [OrderPlaced Event → Event Bus]
+→ PaymentService (consumes event)
+→ InventoryService (consumes event)
+→ ShippingService (consumes event)
+
+
+**Key Components in Event-Driven Systems**
+
+| Component                   | Role                                                |
+| :-------------------------- | :-------------------------------------------------- |
+| **Event Producer**          | Emits events (e.g., OrderService → “OrderPlaced”)   |
+| **Event Broker**            | Routes/stores events (Kafka, RabbitMQ, AWS SNS/SQS) |
+| **Event Consumer**          | Subscribes and reacts to specific events            |
+| **Event Store / Log**       | Persistent, append-only log for replayability       |
+| **Dead Letter Queue (DLQ)** | Catches failed events for retry/debugging           |
+
+
+
+**Deep Dive into Pros & Cons**
+
+Advantages of Event-Driven Architecture
+
+    Loose Coupling – services only know event types, not service endpoints.
+    
+    Scalability – consumers can scale independently.
+    
+    Resilience – if one service fails, others continue; events can be replayed.
+    
+    Extensibility – add new consumers easily (e.g., “EmailService” can subscribe to “OrderPlaced”).
+    
+    Asynchronous performance – requests don’t block waiting for others.
+
+
+Disadvantages / Challenges
+
+    Complex debugging – tracing a flow across async boundaries is hard.
+    
+    Eventual consistency – state synchronization takes time.
+    
+    Ordering & duplication issues – messages may arrive out of order or multiple times.
+    
+    Harder error handling – failures must be handled with DLQs and retries.
+    
+    Operational overhead – need to manage message brokers, offsets, etc.
+    
+
+**When to Use Which**
+
+| Situation                                                          | **Best Approach** |
+| :----------------------------------------------------------------- | :---------------- |
+| You need real-time **user feedback**                               | Request-Driven    |
+| You need to **decouple services**                                  | Event-Driven      |
+| You need **immediate consistency**                                 | Request-Driven    |
+| You can tolerate **eventual consistency**                          | Event-Driven      |
+| You want **reactive workflows** (notifications, analytics, audits) | Event-Driven      |
+| You’re building **APIs / UI-facing** endpoints                     | Request-Driven    |
+
+
+**Hybrid (Best-of-Both Worlds)**
+
+In real systems, we combine both:
+
+   Frontend APIs are request-driven (REST/gRPC).
+   
+   Backend workflows are event-driven.

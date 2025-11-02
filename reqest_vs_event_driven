@@ -1,3 +1,5 @@
+Comparision
+
 | Aspect       | **Request-Driven Architecture**                                | **Event-Driven Architecture**                       |
 | :----------- | :------------------------------------------------------------- | :-------------------------------------------------- |
 | **Trigger**  | Direct client request (HTTP, RPC, gRPC)                        | Internal event (message, change, trigger)           |
@@ -80,4 +82,5 @@ In real systems, we combine both:
 
    Frontend APIs are request-driven (REST/gRPC).
    
+
    Backend workflows are event-driven.
